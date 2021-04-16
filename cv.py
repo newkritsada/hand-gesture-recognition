@@ -27,6 +27,7 @@ def rescale_frame(frame, percent=75):
 
 change_res(width, height)
 
+
 # Initiate holistic model
 with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=0.5) as holistic:
 
@@ -65,19 +66,29 @@ with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=
                                   )
 
         # 4. Pose Detections
-        mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_holistic.POSE_CONNECTIONS,
-                                  #  mp_drawing.DrawingSpec(color=(245,117,66), thickness=2, circle_radius=4),
-                                  #  mp_drawing.DrawingSpec(color=(245,66,230), thickness=2, circle_radius=2)
-                                  )
+        # mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_holistic.POSE_CONNECTIONS,
+        #                           #  mp_drawing.DrawingSpec(color=(245,117,66), thickness=2, circle_radius=4),
+        #                           #  mp_drawing.DrawingSpec(color=(245,66,230), thickness=2, circle_radius=2)
+        #                           )
 
 
 
-
+       
         leftHand = results.left_hand_landmarks
         rightHand = results.right_hand_landmarks
 
+        def L(landmark):
+            global leftHand
+            return leftHand.landmark[landmark]
+
+        def R(landmark):
+            global rightHand
+            return rightHand.landmark[landmark]
+
+
         # Left and Right
         if leftHand and rightHand:
+            print(L(4))
             cv2.putText(image, "Right Hand", (20, 100),
                         cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0))
             cv2.putText(image, "Left Hand", (width-200, 100),
@@ -87,10 +98,12 @@ with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=
             cv2.putText(image, str(dis) , (200, 200),
                         cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 0, 0))
             image = rescale_frame(image, percent=dis*100)
+
+            # if leftHand.landmark[3] and leftHand.landmark[3]
             
 
         # Left
-        if leftHand:
+        elif  leftHand:
             cv2.putText(image, "Left Hand", (width-200, 100),
                         cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0))
             # stop
@@ -100,17 +113,13 @@ with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=
 
 
         # Right
-        if rightHand:
+        elif  rightHand:
             cv2.putText(image, "Right Hand", (20, 100),
                         cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0))
+
+
+
         cv2.imshow('Raw Webcam Feed', image)
-
-
-
-        
-
-
-
         if cv2.waitKey(10) & 0xFF == ord('q'):
             break
 
