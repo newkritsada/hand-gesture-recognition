@@ -4,9 +4,12 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
 import sys
+import os
 
 width = 1280
 height = 720
+windowX = 600
+windowY = 300
 vertices = ((-1, -1, -1), (-1, 1, -1), (-1, 1, 1), (-1, -1, 1),
             (1, -1, -1), (1, 1, -1), (1, 1, 1), (1, -1, 1))
 edges = ((0, 1), (0, 3), (0, 4), (1, 2), (1, 5), (2, 3),
@@ -70,13 +73,15 @@ def Stop():
 
 
 def Main():
+    os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (windowX, windowY)
     pygame.init()
     screen = (width, height)
+    glutInit()
     display = pygame.display.set_mode(screen, DOUBLEBUF | OPENGL)
-
+    glutInitWindowSize(640, 480)
+    glutInitWindowPosition(10, 10)
     glMatrixMode(GL_PROJECTION)
     gluPerspective(45, (screen[0] / screen[1]), 0.1, 500)
-
 
     glMatrixMode(GL_MODELVIEW)
     modelMatrix = glGetFloatv(GL_MODELVIEW_MATRIX)
@@ -95,8 +100,7 @@ def Main():
             glRotatef(rotateY, 1, 0, 0)
             glRotatef(rotateX, 0, 1, 0)
 
-
-        glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
         glMultMatrixf(modelMatrix)
         modelMatrix = glGetFloatv(GL_MODELVIEW_MATRIX)
